@@ -114,8 +114,12 @@ namespace AntColony
             {
                 for(int j= i;j<tepeSayisi;j++)
                 {
-                    uzaklikVerisi[i, j].Text = j+"";
+                    
+                    uzaklikVerisi[i, j].Text = j+"";                    
                     uzaklikVerisi[j, i].Text = uzaklikVerisi[i, j].Text;
+                    if (i == j) uzaklikVerisi[i, j].Text = "0";
+                    else
+                        uzaklikVerisi[i, j].BackColor = Color.Yellow;
                 }
             }
         }

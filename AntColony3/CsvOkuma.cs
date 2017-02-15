@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AntColony3
 {
-  public  class CsvOkuma
+   public class CsvOkuma
     {
         public int num_rows, num_cols;
         public String[,] dataset;
@@ -14,7 +14,7 @@ namespace AntColony3
         public double[,] doubleset;
         public int[,] intset;
 
-        public CsvOkuma(String s)
+        public CsvOkuma(string s)
         {
             dataset = LoadCsv(s);
         }

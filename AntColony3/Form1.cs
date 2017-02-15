@@ -33,6 +33,30 @@ namespace AntColony
             f2.Show();                                    
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            antSayisi = Convert.ToInt32(textBox1.Text);
+           // tepeSayisi = Convert.ToInt32(textBox2.Text);
+            AntColony3.CsvOkuma csvOkuma = new AntColony3.CsvOkuma(textBox3.Text);//BU KISIM ONEMLI !!!            
+            tepeSayisi=csvOkuma.num_cols;
+            double[,] uzaklikMatrisi = csvOkuma.getDoubleSet();
+           
+            Hesap hesap = new Hesap(tepeSayisi, antSayisi, uzaklikMatrisi);
+
+            //showFeromonMatrix(hesap.yollardakiFeromonlar);
+
+           /* richTextBox1.Text += "\nKarincalarin Gittigi Yollar\n-----------\n";
+            for (int i = 0; i < antSayisi; i++)
+            {
+                showAnts(hesap.ants[i]);
+            }*/
+        }
+
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
