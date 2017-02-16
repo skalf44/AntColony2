@@ -44,7 +44,6 @@ namespace AntColony3
         }
         public double[,] getDoubleSet()
         {
-
             toDouble();
             return doubleset;
         }

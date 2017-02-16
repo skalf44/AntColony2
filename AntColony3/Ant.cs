@@ -13,7 +13,7 @@ namespace AntColony
         public double toplamYol,sure=0;
         public List<String> gidilenYol = new List<String>();//gidilenTepeler 1,2,3 diye tutuyor gidilenyol 1,2;2,3 seklinde tutuyor.(kod yaziminda kolaylik saglamasi icin yaptim) gidilcek yol kalmazsa gidilenYol 0'lanacak . her iterasyonda 0 lanacak.
         public List<String> gidilenYolTamami = new List<String>();
-        bool yemekBuldu = false;     
+        public bool yemekBuldu = false;     
         
         public Ant()
         {

@@ -45,7 +45,9 @@ namespace AntColony
             AntColony3.CsvOkuma csvOkuma = new AntColony3.CsvOkuma(textBox3.Text);//BU KISIM ONEMLI !!!            
             tepeSayisi=csvOkuma.num_cols;
             double[,] uzaklikMatrisi = csvOkuma.getDoubleSet();
-           
+            csvOkuma.doublesetGoster();
+            Console.WriteLine("??????????????????????*");
+            Console.WriteLine(tepeSayisi+"");
             Hesap hesap = new Hesap(tepeSayisi, antSayisi, uzaklikMatrisi);
 
             //showFeromonMatrix(hesap.yollardakiFeromonlar);
