@@ -63,7 +63,7 @@ namespace AntColony
                     String s0 = _mevcutTepe + "," +teta;
                     String s1 = teta+","+_mevcutTepe;
                     ants[i].gidilenTepeler.Add(teta);
-                    ants[i].gidilenYol.Add(s1);
+                    ants[i].gidilenYol.Add(s0);
 
                     if (!ants[i].gidilenYolTamami.Contains(s0) && !ants[i].gidilenYolTamami.Contains(s1))
                         ants[i].gidilenYolTamami.Add(s0);
@@ -215,6 +215,11 @@ namespace AntColony
                    
                 }
             }
+
+            if(index==0 && gidilebilenTepeler.Count>0)// bu kisim silinecek
+            {
+                index = rnd.Next(gidilebilenTepeler.Count);
+            } 
           
             return gidilebilenTepeler.ElementAt(index);
         }
