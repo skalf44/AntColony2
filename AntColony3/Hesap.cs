@@ -13,7 +13,7 @@ namespace AntColony
         int tepeSayisi=0;
         public double[,] yollardakiFeromonlar;
         double[,] yollardakiUzakliklar;
-        double alpha = 0.3, betha =0.3,p=0.05;
+        double alpha = 0.5, betha =0.001,p=0.1;
         static Random rnd = new Random();
         public Ant[] ants;
         public int yiyecekTepesi=10, yuvaTepesi=0;
@@ -52,11 +52,15 @@ namespace AntColony
                 time = 1;
                 ants[i].sure = 0;
                 ants[i].yemekBuldu = false;
+                
                 while (!ants[i].gidilenTepeler.Contains(_yiyecekTepesi))
                 {
-                    if (sw.ElapsedMilliseconds %5== 0 && globalRotaBelirlendi==true)
+                    if (sw.ElapsedMilliseconds %2==00 && globalRotaBelirlendi==true)
+                    {
                         globalFeromonGuncelle2();
-                   // time++;
+                    //    Console.Write("\nGLOBAL GUNCELLEME !\n");
+                    }
+                    time++;
                     _mevcutTepe = ants[i].gidilenTepeler.ElementAt(ants[i].gidilenTepeler.Count - 1);
                     ants[i] = gidilebilenTepeleriBelirle(ants[i]);
                     int teta = gecisKurali(_mevcutTepe, ants[i]);
@@ -65,46 +69,78 @@ namespace AntColony
                     ants[i].gidilenTepeler.Add(teta);
                     ants[i].gidilenYol.Add(s0);
 
+                    //yollardakiFeromonlar[_mevcutTepe,teta]+=1/ii;
+
                     if (!ants[i].gidilenYolTamami.Contains(s0) && !ants[i].gidilenYolTamami.Contains(s1))
                         ants[i].gidilenYolTamami.Add(s0);
 
                     ants[i].gidilebilenTepelerSifirla();
+             
                 }
                 ants[i].yemekBuldu = true;
-
                 ants[i].sure = time;
 
-            }
 
-            for (int i = 0; i < antSayisi; i++)
-            {
                 ants[i].toplamYolGuncelle(antToplamYol(ants[i]));
-               
+
                 globalFeromonRotaBelirle(ants[i]);
-                Console.Write("\nglobalRotaDegeri = " + globalRotaDegeri + "\n");
-            }
 
-            for (int i = 0; i < antSayisi; i++)
-            {
                 buharlastirma(ants[i]);
-            }
-            for (int i = 0; i < antSayisi; i++)
-            {
+
                 lokalFeromonGuncelle(ants[i]);
+                gidilenYolGoster(ants[i]);
+                ants[i].sifirla();
             }
-
-           // globalFeromonGuncelle2(ants);
-
             showFeromon();
-            showAntsGidilenTepeler();
+           // showAntsGidilenTepeler();
 
-            for (int i = 0; i < antSayisi; i++)
-            {
-                ants[i].gidilenTepelerSifirla();
-                ants[i].gidilenYol.Clear();
-                ants[i].toplamYolGuncelle(0);
-            }
+            /* for (int i = 0; i < antSayisi; i++)//aldim
+             {
+                 ants[i].toplamYolGuncelle(antToplamYol(ants[i]));
+
+                 globalFeromonRotaBelirle(ants[i]);
+                // Console.Write("\nglobalRotaDegeri = " + globalRotaDegeri + "\n");
+             }*/
+            //gidilenYolGoster(ants[i]);
+            /*  showFeromon();
+              int z=0;
+              for (int i = 0; i < antSayisi; i++)//aldim
+              {
+                  buharlastirma(ants[i]);
+              }
+              showFeromon();
+              for (int i = 0; i < antSayisi; i++)//aldim
+              {
+                  lokalFeromonGuncelle(ants[i]);
+              }
+              z = 1;
+             // globalFeromonGuncelle2(ants);
+
+              showFeromon();
+              z = 1;
+              showAntsGidilenTepeler();
+
+              ants[i].sifirla();//aldim
+              */
+
+            for (int i = 0;i< globalRota.Count; i++)                
+                Console.Write("\n"+globalRota.ElementAt(i)+" :");
+            Console.Write("globalRotaDegeri = " + globalRotaDegeri + "\n");
+
+
         }
+
+        public void gidilenYolGoster(Ant ant)
+        {
+
+            Console.Write("\n Ant Gidilen Yol :");
+            for (int i = 0; i < ant.gidilenTepeler.Count; i++)
+                Console.Write(","+ant.gidilenTepeler[i]);
+            Console.Write(" :: " + ant.toplamYol+"\n");
+
+        }
+
+       
 
         public void rastgeleFeromonAta()
         {
@@ -112,7 +148,7 @@ namespace AntColony
             {
                 for(int j = i + 1; j < tepeSayisi; j++)
                 {
-                    yollardakiFeromonlar[i, j] =1;
+                    yollardakiFeromonlar[i, j] =0;
                     yollardakiFeromonlar[j,i] = yollardakiFeromonlar[i,j];
                 }
             }
@@ -204,29 +240,81 @@ namespace AntColony
             double max = 0;
             double d = 0;
             int index=0;
-            for (int i = 0; i < gidilebilenTepeler.Count; i++)
-            {
 
-                d = gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(i));
+            double sil = 0;
+            int sil_index = 0;
+
+            List<int> silinecekler = new List<int>();
+            silinecekler = gidilebilenTepeler.ToList();//geciciden butun ortakları silcem.
+
+            List<int> aynilar = new List<int>();
+            aynilar = gidilebilenTepeler.ToList();//aynıları burada tutup rassal atayacam
+            gidilebilenTepeler.Clear();
+            int rndom = 0;
+            if (gidilebilenTepeler.Count > 1)
+            {
+                for (int i = 0; i < gidilebilenTepeler.Count; i++)
+                {
+                    aynilar.Clear();
+                    sil = gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(i));
+                    for (int j = 0; j < gidilebilenTepeler.Count; i++)
+                    {
+                        if (sil == gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(j)))
+                        {
+                            aynilar.Add(gidilebilenTepeler.ElementAt(j));
+                            silinecekler.RemoveAll(item=>gidilebilenTepeler.ElementAt(j)==sil);
+                            silinecekler.RemoveAll(item => gidilebilenTepeler.ElementAt(i) == sil);
+                        }
+                    }
+                    if (aynilar.Count > 0)
+                    {
+                        rndom = rnd.Next() % aynilar.Count;
+                    }
+                    silinecekler.Add(rndom);
+                }
+            }
+           
+            
+
+            /* for (int i = 0; i < gidilebilenTepeler.Count; i++)
+             {
+                 d = gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(i));
+                 if (max <= d)
+                 {
+                     max = d;
+                     index = i;
+
+                 }
+             }*/
+
+            for (int i = 0; i < silinecekler.Count; i++)
+            {
+                d = gecisKuraliferomonHesabi(mevcutTepe, silinecekler.ElementAt(i));
                 if (max <= d)
                 {
                     max = d;
                     index = i;
-                   
+
                 }
             }
+
+
+
+            /*
 
             if(index==0 && gidilebilenTepeler.Count>0)// bu kisim silinecek
             {
                 index = rnd.Next(gidilebilenTepeler.Count);
-            } 
-          
-            return gidilebilenTepeler.ElementAt(index);
+            } */
+
+            // return gidilebilenTepeler.ElementAt(index);
+            return silinecekler.ElementAt(index);
         }
         double gecisKuraliferomonHesabi(int mevcut,int gidilecek)
-        {          
-            
-            return (Math.Pow(yollardakiUzakliklar[mevcut,gidilecek],alpha)* Math.Pow(yollardakiFeromonlar[mevcut, gidilecek], betha) );
+        {
+           
+                return (Math.Pow(yollardakiUzakliklar[mevcut, gidilecek], alpha) * Math.Pow(yollardakiFeromonlar[mevcut, gidilecek], betha));
+           
             
         }
         public int rouletteWheel(int mevcutTepe, List<int> gidilebilenTepeler)
