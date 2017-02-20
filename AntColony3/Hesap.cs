@@ -13,11 +13,12 @@ namespace AntColony
         int tepeSayisi=0;
         public double[,] yollardakiFeromonlar;
         double[,] yollardakiUzakliklar;
-        double alpha = 0.5, betha =0.001,p=0.1;
+        double alpha = 0.2, betha =0.7,p=0.01;
         static Random rnd = new Random();
         public Ant[] ants;
         public int yiyecekTepesi=10, yuvaTepesi=0;
         int antSayisi = 0;
+        double Q = 1;
         double cezaPuani = 1;
         Stopwatch sw = new Stopwatch();
         public bool globalRotaBelirlendi = false;
@@ -148,7 +149,7 @@ namespace AntColony
             {
                 for(int j = i + 1; j < tepeSayisi; j++)
                 {
-                    yollardakiFeromonlar[i, j] =0;
+                    yollardakiFeromonlar[i, j] =1;
                     yollardakiFeromonlar[j,i] = yollardakiFeromonlar[i,j];
                 }
             }
@@ -209,8 +210,7 @@ namespace AntColony
         public Ant gidilebilenTepeleriBelirle(Ant ant)
         {
             if(ant.gidilenTepeler.Count>0)
-            {
-             
+            {             
                 int mevcutTepe = ant.gidilenTepeler.ElementAt(ant.gidilenTepeler.Count - 1);
                 for (int j = 0; j < tepeSayisi; j++)
                 {
@@ -221,6 +221,17 @@ namespace AntColony
                         {
                             ant.gidilebilenTepeler.Add(j);
                         }
+                    }
+                }
+            }
+            else
+            {
+                int mevcutTepe = ant.gidilenTepeler.ElementAt(ant.gidilenTepeler.Count - 1);
+                for (int j = 0; j < tepeSayisi; j++)
+                {
+                    if (yollardakiUzakliklar[mevcutTepe, j] != 0 && yollardakiUzakliklar[j, mevcutTepe] != 0)
+                    {                      
+                        ant.gidilebilenTepeler.Add(j);                        
                     }
                 }
             }
@@ -249,7 +260,7 @@ namespace AntColony
 
             List<int> aynilar = new List<int>();
             aynilar = gidilebilenTepeler.ToList();//aynıları burada tutup rassal atayacam
-            gidilebilenTepeler.Clear();
+            //gidilebilenTepeler.Clear();
             int rndom = 0;
             if (gidilebilenTepeler.Count > 1)
             {
@@ -257,20 +268,27 @@ namespace AntColony
                 {
                     aynilar.Clear();
                     sil = gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(i));
-                    for (int j = 0; j < gidilebilenTepeler.Count; i++)
+                    for (int j = 0; j < gidilebilenTepeler.Count; j++)
                     {
                         if (sil == gecisKuraliferomonHesabi(mevcutTepe, gidilebilenTepeler.ElementAt(j)))
                         {
                             aynilar.Add(gidilebilenTepeler.ElementAt(j));
-                            silinecekler.RemoveAll(item=>gidilebilenTepeler.ElementAt(j)==sil);
-                            silinecekler.RemoveAll(item => gidilebilenTepeler.ElementAt(i) == sil);
+                            // silinecekler.RemoveAll(item=>gidilebilenTepeler.ElementAt(j)==sil);
+                            //silinecekler.RemoveAll(item => gidilebilenTepeler.ElementAt(j) == j);
+                         
+                            //silinecekler.RemoveAll(10);
+
+                            //silinecekler.Remove(10);
+                            silinecekler.Remove(gidilebilenTepeler.ElementAt(j));
+                            //  silinecekler.RemoveAll(item => gidilebilenTepeler.ElementAt(i) == sil);
                         }
                     }
                     if (aynilar.Count > 0)
                     {
                         rndom = rnd.Next() % aynilar.Count;
+                        silinecekler.Add(aynilar.ElementAt(rndom));
                     }
-                    silinecekler.Add(rndom);
+                   
                 }
             }
            
@@ -294,12 +312,11 @@ namespace AntColony
                 {
                     max = d;
                     index = i;
-
                 }
             }
 
 
-
+            double z = d;
             /*
 
             if(index==0 && gidilebilenTepeler.Count>0)// bu kisim silinecek
@@ -311,11 +328,8 @@ namespace AntColony
             return silinecekler.ElementAt(index);
         }
         double gecisKuraliferomonHesabi(int mevcut,int gidilecek)
-        {
-           
-                return (Math.Pow(yollardakiUzakliklar[mevcut, gidilecek], alpha) * Math.Pow(yollardakiFeromonlar[mevcut, gidilecek], betha));
-           
-            
+        {           
+            return (Math.Pow(yollardakiUzakliklar[mevcut, gidilecek], alpha) * Math.Pow(yollardakiFeromonlar[mevcut, gidilecek], betha));
         }
         public int rouletteWheel(int mevcutTepe, List<int> gidilebilenTepeler)
         {
@@ -348,12 +362,12 @@ namespace AntColony
                 }
                
             }
-            if (gidilebilenTepeler.Count==0 || gidilcekTepe==-1)
+         /*   if (gidilebilenTepeler.Count==0 || gidilcekTepe==-1)
             {
                 Console.Write("Girmedi !!!!!!!!!!!!!!!!");
             }
-
-            Console.Write("\nolasililklar**");
+            */
+           /* Console.Write("\nolasililklar**");
             for (int i = 0; i < gidilebilenTepeler.Count; i++)
             {
                 Console.Write("****" + olasiliklar[i]);
@@ -364,11 +378,11 @@ namespace AntColony
                 }
             }
             Console.WriteLine();
-            Console.Write("Roulette**");
+            Console.Write("Roulette**"+"Random : "+p+"???"+gidilcekTepe+"!!!!");
             for(int i = 0; i < gidilebilenTepeler.Count+1; i++)
             {
                 Console.Write(roulette[i]+";");
-            }
+            }*/
            
             return gidilcekTepe;
         }
@@ -427,7 +441,7 @@ namespace AntColony
                     //yollardakiFeromonlar[m, g] -=ant.sure/(ant.sure*cezaPuani);
                     double k = yollardakiFeromonlar[m, g];
                     //yollardakiFeromonlar[m, g] += 1 / (ant.toplamYol)+1/ant.sure;
-                    yollardakiFeromonlar[m, g] += 1 / (ant.toplamYol);
+                    yollardakiFeromonlar[m, g] += Q / (ant.toplamYol);
                     yollardakiFeromonlar[g, m] = yollardakiFeromonlar[m, g];
 
 
@@ -523,13 +537,15 @@ namespace AntColony
 
                 double k = yollardakiFeromonlar[xy[0], xy[1]];
                 //yollardakiFeromonlar[xy[0], xy[1]] = (1 - p) * yollardakiFeromonlar[xy[0], xy[1]] + 1 / _ants[indis].toplamYol;
-                yollardakiFeromonlar[xy[0], xy[1]] = (1 - p) * yollardakiFeromonlar[xy[0], xy[1]] + 1 / globalRotaDegeri;
+                yollardakiFeromonlar[xy[0], xy[1]] = (1 - p) * yollardakiFeromonlar[xy[0], xy[1]] +Q/ globalRotaDegeri;
                 yollardakiFeromonlar[xy[1], xy[0]] = yollardakiFeromonlar[xy[0], xy[1]];//simetrigni ekledim
                 int zz = 0;
                 if (Double.IsInfinity(yollardakiFeromonlar[xy[0], xy[1]]) || Double.IsInfinity(yollardakiFeromonlar[xy[1], xy[0]]))
                 {
                     int z = 0;
                 }
+
+              //  Console.WriteLine("GLOBAL AKTIF");
             }
         }
 

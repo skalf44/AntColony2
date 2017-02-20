@@ -33,7 +33,8 @@ namespace AntColony
             gidilenTepelerSifirla();
             gidilenYol.Clear();
             gidilenYolTamami.Clear();/// yeni ekledim
-            toplamYolGuncelle(0);            
+            toplamYolGuncelle(0);
+            gidilebilenTepeler.Clear();            
         }
 
         public void toplamYolGuncelle(double t)
